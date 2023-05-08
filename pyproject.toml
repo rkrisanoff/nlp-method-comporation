@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "spam-detector"
+version = "0.1.0"
+description = ""
+authors = ["Крисанов Роман Валерьевич <284712@niuitmo.ru>"]
+readme = "README.md"
+packages = [{include = "spam_detector"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.0.1"
+numpy = "^1.24.3"
+scikit-learn = "^1.2.2"
+nltk = "^3.8.1"
+jupyter = "^1.0.0"
+seaborn = "^0.12.2"
+matplotlib = "^3.7.1"
+click = "^8.1.3"
+sklearn = "^0.0.post4"
+
+[tool.poetry.scripts]
+prepare_and_fit_wrapper = "main:prepare_and_fit_wrapper"
+predict_if_spam = "main:predict_if_spam"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
