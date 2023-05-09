@@ -19,10 +19,10 @@ classifiers = {"naive_bayes": "MultinomialNB", "random_forest": "RandomForestCla
 @click.argument('message', type=str)
 def predict_if_spam(vector_method, class_method, message, is_probabilistic):
     vectorizer = load(
-        open(f"vectorizators/model_{vectorizers[vector_method]}.pkl", "rb")
+        open(f"models/vectorizers/{vectorizers[vector_method]}_vectorizer.pkl", "rb")
     )
     classifier = load(
-        open(f"models/{vectorizers[vector_method]}/{classifiers[class_method]}.pkl", 'rb'))
+        open(f"models/classifiers/{vectorizers[vector_method]}/{classifiers[class_method]}.pkl", 'rb'))
 
     if vector_method == "bag_of_words":
         vectorized_message = vectorizer.transform([message])
