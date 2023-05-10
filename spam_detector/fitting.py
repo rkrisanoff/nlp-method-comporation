@@ -1,5 +1,6 @@
 import os
 
+import nltk
 import numpy as np
 import pandas as pd
 
@@ -66,6 +67,9 @@ def create_model_dir_struct():
 
 
 def prepare_and_fit(dataset_file_csv='dataset/emails.csv'):
+    nltk.download('stopwords')
+    nltk.download('punkt')
+
     create_model_dir_struct()
     dataset = pd.read_csv(dataset_file_csv)
     # Check for duplicates and remove them

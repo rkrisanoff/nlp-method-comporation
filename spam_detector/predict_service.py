@@ -1,10 +1,9 @@
-import sys
+from pickle import load
 
 import click
 from nltk import word_tokenize
 
 from .utils import vectorize
-from pickle import load
 
 vectorizers = {"bag_of_words": "bag_of_words", "fast_text": "fast_text", "word2vec": "word2vec"}
 classifiers = {"naive_bayes": "MultinomialNB", "random_forest": "RandomForestClassifier", "svc": "SVC"}
@@ -31,6 +30,8 @@ def predict_if_spam(vector_method, class_method, message, is_probabilistic):
         vectorized_message = vectorize(vectorizer, tokenized_message)
 
     if is_probabilistic:
-        click.echo(classifier.predict_proba(vectorized_message))
+        predicted_probably = classifier.predict_proba(vectorized_message)
+        click.echo(f"The message is spam with probably {predicted_probably[1]}")
     else:
-        click.echo(classifier.predict(vectorized_message))
+        predicted = classifier.predict(vectorized_message)
+        click.echo(f"Message is {'' if predicted[0][0] == 1 else 'not'}spam")
