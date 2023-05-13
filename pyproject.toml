@@ -15,11 +15,17 @@ seaborn = "^0.12.2"
 click = "^8.1.3"
 gensim = "^4.3.1"
 scikit-learn = "^1.2.2"
+aiosmtpd = "^1.4.4.post2"
 
 [tool.poetry.scripts]
 prepare_and_fit = "spam_detector.fitting:prepare_and_fit"
 predict_if_spam = "spam_detector.predict_service:predict_if_spam"
 
+
+[tool.poetry.group.dev.dependencies]
+tox = "^4.5.1"
+pylint = "^2.17.4"
+pycodestyle = "^2.10.0"
 
 [build-system]
 requires = ["poetry-core"]
