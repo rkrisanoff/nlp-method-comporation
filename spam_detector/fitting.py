@@ -1,12 +1,17 @@
 import os
 
+import warnings
+
 import click
 import nltk
 import numpy as np
 import pandas as pd
-
 import string
+import time
 from pickle import dump
+
+from prettytable import PrettyTable
+# from prettytable import PrettyTable
 from sklearn.feature_extraction.text import CountVectorizer
 
 from sklearn.model_selection import train_test_split
@@ -14,7 +19,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 from nltk.corpus import stopwords
 
 from gensim.models import Word2Vec
@@ -24,6 +29,8 @@ from nltk.tokenize import word_tokenize
 from .utils import vectorize
 
 import shutil
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def process(text):
@@ -75,9 +82,8 @@ def prepare_and_fit(datasets=None):
         datasets = {"en": 'dataset/emails_en.csv', "ru": 'dataset/emails_ru.csv'}
     nltk.download('stopwords')
     nltk.download('punkt')
-
     create_model_dir_struct()
-    for lang in ["ru", "en"]:
+    for lang in ["ru", "en"]:  # "ru"
         print(f"fitting the model by lang={lang}")
         dataset = pd.read_csv(datasets[lang])
         # Check for duplicates and remove them
@@ -85,9 +91,20 @@ def prepare_and_fit(datasets=None):
         # Fit the CountVectorizer to data
         tokenized_text = [word_tokenize(text) for text in dataset['text']]
 
+        start_time = time.time()
         model_bag_of_words, message_bag_of_words = fit_MNB(dataset)
+        finish_time = time.time()
+        print(f"\tfitting bag of words, duration: {finish_time - start_time} seconds")
+
+        start_time = time.time()
         model_word2text, message_word2vec = fit_word2text(tokenized_text)
+        finish_time = time.time()
+        print(f"fitting word to vec, duration: {finish_time - start_time} seconds")
+
+        start_time = time.time()
         model_fast_text, message_fast_text = fit_fast_text(tokenized_text)
+        finish_time = time.time()
+        print(f"fitting fast text, duration: {finish_time - start_time} seconds")
 
         minimal = min([min(vec) for vec in message_fast_text])
         if minimal < 0:
@@ -105,7 +122,8 @@ def prepare_and_fit(datasets=None):
         dump(model_bag_of_words, open(f"models/{lang}/vectorizers/bag_of_words_vectorizer.pkl", "wb"))
         dump(model_fast_text, open(f"models/{lang}/vectorizers/fast_text_vectorizer.pkl", "wb"))
         dump(model_word2text, open(f"models/{lang}/vectorizers/word2vec_vectorizer.pkl", "wb"))
-
+        finish_time = time.time()
+        print(finish_time - start_time)
         for vectorized_message, vectorizer_name in [
             (message_bag_of_words, "bag_of_words"),
             (message_fast_text_non_negative, "fast_text"),
@@ -119,18 +137,37 @@ def prepare_and_fit(datasets=None):
                 (RandomForestClassifier, "RandomForestClassifier"),
                 (SVC, "SVC"),
             ]:
+                print(f"\n\n\n<= {lang}:{vectorizer_name}:{model_name} =>\n")
                 try:
+
                     model = Model()
+
+                    start_time = time.time()
                     model.fit(x_train, y_train)
+                    finish_time = time.time()
+                    print(f"fitting {model_name} by {vectorizer_name}: {finish_time - start_time} seconds")
                     # Model predictions on test set
                     y_pred = model.predict(x_test)
+                    cm = confusion_matrix(y_test, y_pred)
+                    table = PrettyTable()
+                    print(f"TP = {cm[0][0]}\nFP = {cm[1][0]}\nTN = {cm[0][1]}\nFN = {cm[1][1]}\n")
+
+                    table.field_names = ["Predicted \\ Actual", "Positive", "Negative"]
+                    # добавление данных по одной строке за раз
+                    table.add_row(["Positive", cm[0][0], cm[1][0]])
+                    table.add_row(["Negative", cm[0][1], cm[1][1]])
+
+                    print(f"{table}")
+
                     # Model Evaluation | Accuracy
                     accuracy = accuracy_score(y_test, y_pred)
-                    print(f"\taccuracy of {model_name}-> {accuracy * 100}")
+
+                    print(f"accuracy of {model_name}-> {accuracy * 100}%")
                     # Model Evaluation | Classification report
+
                     dump(model, open(f"models/{lang}/classifiers/{vectorizer_name}/{model_name}.pkl", 'wb'))
 
-                    print(classification_report(y_test, y_pred))
+                    # print(classification_report(y_test, y_pred))
 
                 except Exception as e:
                     print(f"\t{model_name} ->"

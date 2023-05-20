@@ -17,7 +17,8 @@ COPY . /app
 RUN poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi --no-cache --only main \
     && poetry cache clear pypi --all -n \
-    && rm -rf /root/.cache/pypoetry \
-    && poetry run python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')"
+    && rm -rf /root/.cache/pypoetry
+#RUN python -m pip install . \
+#    && python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')"
 
 ENTRYPOINT ["poetry","run"]

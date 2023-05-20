@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "spam-detector"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Крисанов Роман Валерьевич <284712@niuitmo.ru>"]
 readme = "README.md"
@@ -15,11 +15,14 @@ seaborn = "^0.12.2"
 click = "^8.1.3"
 gensim = "^4.3.1"
 scikit-learn = "^1.2.2"
-aiosmtpd = "^1.4.4.post2"
+pytest-order = "^1.1.0"
+prettytable = "^3.7.0"
+aiogram = "3.0.0b7"
 
 [tool.poetry.scripts]
 prepare_and_fit = "spam_detector.fitting:prepare_and_fit"
 predict_if_spam = "spam_detector.predict_service:predict_if_spam"
+start_bot = "spam_detector.telegram_bot:start"
 
 
 [tool.poetry.group.dev.dependencies]

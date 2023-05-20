@@ -7,7 +7,8 @@ from .utils import vectorize
 
 vectorizers = {"bag_of_words": "bag_of_words", "fast_text": "fast_text", "word2vec": "word2vec"}
 classifiers = {"naive_bayes": "MultinomialNB", "random_forest": "RandomForestClassifier", "svc": "SVC"}
-langs = {"ru":"russian","en":"english"}
+langs = {"ru": "russian", "en": "english"}
+
 
 @click.command()
 @click.option('--vector-method', '-v', type=click.Choice(list(vectorizers.keys()), case_sensitive=False),
@@ -18,7 +19,7 @@ langs = {"ru":"russian","en":"english"}
               required=True)
 @click.option('--probabilistic', "-p", "is_probabilistic", is_flag=True, default=False, show_default=True)
 @click.argument('message', type=str)
-def predict_if_spam(vector_method, class_method, lang,message, is_probabilistic):
+def predict_if_spam(vector_method, class_method, lang, message, is_probabilistic):
     if class_method == "svc" and is_probabilistic:
         click.echo("SVC doesn't support probabilistic prediction")
 
@@ -40,5 +41,3 @@ def predict_if_spam(vector_method, class_method, lang,message, is_probabilistic)
     else:
         predicted = classifier.predict(vectorized_message)
         click.echo(f"Message is {'' if predicted[0] == 1 else 'not'} spam")
-
-
