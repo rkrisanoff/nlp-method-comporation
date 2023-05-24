@@ -22,7 +22,7 @@ aiogram = "3.0.0b7"
 [tool.poetry.scripts]
 prepare_and_fit = "spam_detector.fitting:prepare_and_fit"
 predict_if_spam = "spam_detector.predict_service:predict_if_spam"
-start_bot = "spam_detector.telegram_bot:start"
+start_bot = "spam_detector.bot:runner"
 
 
 [tool.poetry.group.dev.dependencies]
