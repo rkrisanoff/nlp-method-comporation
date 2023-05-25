@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.11-slim
 LABEL authors="drukhary"
 
 RUN apt-get update \

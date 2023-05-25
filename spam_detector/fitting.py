@@ -2,7 +2,6 @@ import os
 
 import warnings
 
-import click
 import nltk
 import numpy as np
 import pandas as pd
@@ -11,7 +10,6 @@ import time
 from pickle import dump
 
 from prettytable import PrettyTable
-# from prettytable import PrettyTable
 from sklearn.feature_extraction.text import CountVectorizer
 
 from sklearn.model_selection import train_test_split
@@ -19,7 +17,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 
-from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
+from sklearn.metrics import  accuracy_score, confusion_matrix
 from nltk.corpus import stopwords
 
 from gensim.models import Word2Vec
@@ -34,9 +32,9 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def process(text):
-    nopunc = [char for char in text if char not in string.punctuation]
-    nopunc = ''.join(nopunc)
-    clean = [word for word in nopunc.split() if word.lower() not in stopwords.words('english')]
+    no_punc = [char for char in text if char not in string.punctuation]
+    no_punc = ''.join(no_punc)
+    clean = [word for word in no_punc.split() if word.lower() not in stopwords.words('english')]
     return clean
 
 
@@ -101,17 +99,17 @@ def prepare_and_fit(datasets=None):
         finish_time = time.time()
         print(f"fitting word to vec, duration: {finish_time - start_time} seconds")
 
-        start_time = time.time()
-        model_fast_text, message_fast_text = fit_fast_text(tokenized_text)
-        finish_time = time.time()
-        print(f"fitting fast text, duration: {finish_time - start_time} seconds")
+        # start_time = time.time()
+        # model_fast_text, message_fast_text = fit_fast_text(tokenized_text)
+        # finish_time = time.time()
+        # print(f"fitting fast text, duration: {finish_time - start_time} seconds")
 
-        minimal = min([min(vec) for vec in message_fast_text])
-        if minimal < 0:
-            minimal = np.abs(minimal)
-            message_fast_text_non_negative = [vec + minimal for vec in message_fast_text]
-        else:
-            message_fast_text_non_negative = message_fast_text
+        # minimal = min([min(vec) for vec in message_fast_text])
+        # if minimal < 0:
+        #     minimal = np.abs(minimal)
+        #     message_fast_text_non_negative = [vec + minimal for vec in message_fast_text]
+        # else:
+        #     message_fast_text_non_negative = message_fast_text
 
         minimal = min([min(vec) for vec in message_word2vec])
         if minimal < 0:
@@ -120,13 +118,13 @@ def prepare_and_fit(datasets=None):
         else:
             message_word2vec_non_negative = message_word2vec
         dump(model_bag_of_words, open(f"models/{lang}/vectorizers/bag_of_words_vectorizer.pkl", "wb"))
-        dump(model_fast_text, open(f"models/{lang}/vectorizers/fast_text_vectorizer.pkl", "wb"))
+        # dump(model_fast_text, open(f"models/{lang}/vectorizers/fast_text_vectorizer.pkl", "wb"))
         dump(model_word2text, open(f"models/{lang}/vectorizers/word2vec_vectorizer.pkl", "wb"))
         finish_time = time.time()
         print(finish_time - start_time)
         for vectorized_message, vectorizer_name in [
             (message_bag_of_words, "bag_of_words"),
-            (message_fast_text_non_negative, "fast_text"),
+            # (message_fast_text_non_negative, "fast_text"),
             (message_word2vec_non_negative, "word2vec"),
         ]:
             x_train, x_test, y_train, y_test = train_test_split(vectorized_message, dataset['spam'], test_size=0.20,

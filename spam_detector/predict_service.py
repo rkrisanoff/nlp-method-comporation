@@ -1,14 +1,11 @@
+import os
 from pickle import load
 
 import click
 from nltk import word_tokenize
 
 from .utils import vectorize
-
-vectorizers = {"bag_of_words": "bag_of_words", "fast_text": "fast_text", "word2vec": "word2vec"}
-classifiers = {"naive_bayes": "MultinomialNB", "random_forest": "RandomForestClassifier", "svc": "SVC"}
-langs = {"ru": "russian", "en": "english"}
-
+from .domen import vectorizers, classifiers, langs
 
 @click.command()
 @click.option('--vector-method', '-v', type=click.Choice(list(vectorizers.keys()), case_sensitive=False),
@@ -23,11 +20,24 @@ def predict_if_spam(vector_method, class_method, lang, message, is_probabilistic
     if class_method == "svc" and is_probabilistic:
         click.echo("SVC doesn't support probabilistic prediction")
 
-    vectorizer = load(
-        open(f"models/{lang}/vectorizers/{vectorizers[vector_method]}_vectorizer.pkl", "rb")
-    )
-    classifier = load(
-        open(f"models/{lang}/classifiers/{vectorizers[vector_method]}/{classifiers[class_method]}.pkl", 'rb'))
+    vectorizer_path = [
+        'models',
+        lang,
+        'vectorizers',
+        f"{vectorizers[vector_method]}_vectorizer.pkl"
+    ]
+    with open(os.path.join(*vectorizer_path), "rb") as vectorizer_file:
+        vectorizer = load(vectorizer_file)
+
+    classifier_path = [
+        'models',
+        lang,
+        'classifiers',
+        vectorizers[vector_method],
+        f"{classifiers[class_method]}.pkl",
+    ]
+    with open(os.path.join(*classifier_path), "rb") as classifier_file:
+        classifier = load(classifier_file)
 
     if vector_method == "bag_of_words":
         vectorized_message = vectorizer.transform([message])

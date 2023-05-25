@@ -18,6 +18,8 @@ scikit-learn = "^1.2.2"
 pytest-order = "^1.1.0"
 prettytable = "^3.7.0"
 aiogram = "3.0.0b7"
+langdetect = "^1.0.9"
+setuptools = "^67.8.0"
 
 [tool.poetry.scripts]
 prepare_and_fit = "spam_detector.fitting:prepare_and_fit"
