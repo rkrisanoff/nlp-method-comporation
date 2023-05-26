@@ -57,9 +57,13 @@ def fit_fast_text(tokenized_text):
 
 
 def create_model_dir_struct():
-    if os.path.exists("models") and os.path.isdir("models"):
-        shutil.rmtree("models")
-    os.makedirs("models")
+    assert os.path.exists("models") and os.path.isdir("models"),"models directory doesn't exist!"
+    for filename in os.listdir("models"):
+        file_path = os.path.join("models", filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+        elif os.path.isdir(file_path):
+            shutil.rmtree(file_path)
     os.chdir("models")
     os.makedirs("ru")
     os.makedirs("en")
@@ -97,19 +101,19 @@ def prepare_and_fit(datasets=None):
         start_time = time.time()
         model_word2text, message_word2vec = fit_word2text(tokenized_text)
         finish_time = time.time()
-        print(f"fitting word to vec, duration: {finish_time - start_time} seconds")
+        print(f"\tfitting word to vec, duration: {finish_time - start_time} seconds")
 
-        # start_time = time.time()
-        # model_fast_text, message_fast_text = fit_fast_text(tokenized_text)
-        # finish_time = time.time()
-        # print(f"fitting fast text, duration: {finish_time - start_time} seconds")
+        start_time = time.time()
+        model_fast_text, message_fast_text = fit_fast_text(tokenized_text)
+        finish_time = time.time()
+        print(f"\tfitting fast text, duration: {finish_time - start_time} seconds")
 
-        # minimal = min([min(vec) for vec in message_fast_text])
-        # if minimal < 0:
-        #     minimal = np.abs(minimal)
-        #     message_fast_text_non_negative = [vec + minimal for vec in message_fast_text]
-        # else:
-        #     message_fast_text_non_negative = message_fast_text
+        minimal = min([min(vec) for vec in message_fast_text])
+        if minimal < 0:
+            minimal = np.abs(minimal)
+            message_fast_text_non_negative = [vec + minimal for vec in message_fast_text]
+        else:
+            message_fast_text_non_negative = message_fast_text
 
         minimal = min([min(vec) for vec in message_word2vec])
         if minimal < 0:
@@ -118,13 +122,13 @@ def prepare_and_fit(datasets=None):
         else:
             message_word2vec_non_negative = message_word2vec
         dump(model_bag_of_words, open(f"models/{lang}/vectorizers/bag_of_words_vectorizer.pkl", "wb"))
-        # dump(model_fast_text, open(f"models/{lang}/vectorizers/fast_text_vectorizer.pkl", "wb"))
+        dump(model_fast_text, open(f"models/{lang}/vectorizers/fast_text_vectorizer.pkl", "wb"))
         dump(model_word2text, open(f"models/{lang}/vectorizers/word2vec_vectorizer.pkl", "wb"))
         finish_time = time.time()
         print(finish_time - start_time)
         for vectorized_message, vectorizer_name in [
             (message_bag_of_words, "bag_of_words"),
-            # (message_fast_text_non_negative, "fast_text"),
+            (message_fast_text_non_negative, "fast_text"),
             (message_word2vec_non_negative, "word2vec"),
         ]:
             x_train, x_test, y_train, y_test = train_test_split(vectorized_message, dataset['spam'], test_size=0.20,

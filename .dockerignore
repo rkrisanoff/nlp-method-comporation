@@ -1,0 +1,11 @@
+.dockerignore
+.gitignore
+.idea
+.tox
+.git
+requirements.txt
+dataset/*.xlsx
+tests
+venv
+Dockerfile
+models
