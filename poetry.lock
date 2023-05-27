@@ -823,6 +823,21 @@ files = [
 ]
 
 [[package]]
+name = "markdown"
+version = "3.4.3"
+description = "Python implementation of John Gruber's Markdown."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "Markdown-3.4.3-py3-none-any.whl", hash = "sha256:065fd4df22da73a625f14890dd77eb8040edcbd68794bcd35943be14490608b2"},
+    {file = "Markdown-3.4.3.tar.gz", hash = "sha256:8bf101198e004dc93e84a12a7395e31aac6a9c9942848ae1d99b9d72cf9b3520"},
+]
+
+[package.extras]
+testing = ["coverage", "pyyaml"]
+
+[[package]]
 name = "matplotlib"
 version = "3.7.1"
 description = "Python plotting package"
@@ -1962,4 +1977,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "2405903cf0d730a4cb58a845841ab60b9e60aa82cc7259ac94b7ecc1dbb18483"
+content-hash = "c776bbf8b84cc7391ea50673fe40a0c815a33ccf22bea0175882174cb4c62564"

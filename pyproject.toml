@@ -16,6 +16,7 @@ gensim = "^4.3.1"
 scikit-learn = "^1.2.2"
 prettytable = "^3.7.0"
 aiogram = "3.0.0b7"
+markdown = "^3.4.3"
 
 [tool.poetry.scripts]
 fit = "spam_detector.fitting:prepare_and_fit"

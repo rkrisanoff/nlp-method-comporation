@@ -10,8 +10,8 @@ RUN \
     && poetry run python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')" \
     && rm -rf /root/.cache/pypoetry
 
-VOLUME "${pwd}"/dataset:/app/datasets
-VOLUME "${pwd}"/models:/app/models
+#VOLUME "${pwd}"/dataset:/app/datasets
+#VOLUME "${pwd}"/models:/app/models
 
 
 ENTRYPOINT ["poetry","run"]

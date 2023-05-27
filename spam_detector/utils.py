@@ -1,6 +1,7 @@
 """
 The package with useful utils
 """
+import numpy as np
 
 
 def vectorize(model, tokenized_message):
@@ -14,4 +15,12 @@ def vectorize(model, tokenized_message):
             vectorized_message.append(sum(vectors) / len(vectors))
         else:
             vectorized_message.append([])
-    return vectorized_message
+
+    minimal = min([min(vec) for vec in vectorized_message])
+    if minimal < 0:
+        minimal = np.abs(minimal)
+        message_non_negative = [vec + minimal + np.abs(0.1) for vec in vectorized_message]
+    else:
+        message_non_negative = vectorized_message
+
+    return message_non_negative

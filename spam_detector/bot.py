@@ -228,6 +228,10 @@ async def model_configuration_finishing(message: Message, state: FSMContext) -> 
     await state.set_state(ModelConfiguration.finishing)
 
     data = await state.get_data()
+    vectorizer_id = data.get("vectorizer", "bag_of_words")
+    classifier_id = data.get("classifier", "naive_bayes")
+    lang_id = data.get("language", "en")
+
     await message.answer(f"""Anyway, you ended configuration!
 
 - vectorizer: {data.get("vectorizer", "bag_of_words")}
@@ -265,6 +269,7 @@ language: {data.get("language", "en")}
         else:
             if probability:
                 await message.answer(f"Your message is a spam!!!")
+                await message.answer(f"You message `{message.text}` was justified deleted")
                 await message.delete()
             else:
                 await message.answer(f"Your message is NOT a spam.")
